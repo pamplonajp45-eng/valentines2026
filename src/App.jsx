@@ -18,10 +18,10 @@ function App() {
   const bgMusicRef = useRef(null);
 
   // --- MEDIA SLOTS (Update these paths later) ---
-  const AUDIO_PATH = "./image_songs/celebration2.mp3";
-  const RIDE_IMAGE_PATH = "./image_songs/image.jpg";
-  const SFX_YES_PATH = "./image_songs/celebration.mp3"; // Using shorter version for SFX if available, or stay as is
-  const SFX_NO_PATH = "./image_songs/sfx-no.mp3";
+  const AUDIO_PATH = "/image_songs/celebration2.mp3";
+  const RIDE_IMAGE_PATH = "/image_songs/image.jpg";
+  const SFX_YES_PATH = "/image_songs/celebration.mp3"; // Using shorter version for SFX if available, or stay as is
+  const SFX_NO_PATH = "/image_songs/sfx-no.mp3";
 
   const RIDE_DETAILS = {
     destination: "A Romantic Trip to the Mountains! 🏔️",
