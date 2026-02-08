@@ -5,14 +5,16 @@ function App() {
   const [showInvitation, setShowInvitation] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showJumpscare, setShowJumpscare] = useState(false);
   const [inputName, setInputName] = useState("");
   const [response, setResponse] = useState(null);
   const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 });
   const [noButtonSize, setNoButtonSize] = useState(1);
 
-  // --- AUTH CONFIGURATION ---
-  const TARGET_NAME = "MARY GRACE D. AMUTAN"; // Placeholder - PLEASE REPLACE WITH THE ACTUAL NAME
-  // ---------------------------
+  // --- ASSETS ---
+  const TARGET_NAME = "MARY GRACE D. AMUTAN";
+  const RICK_SFX_URL = "/image_songs/rick.mp3"; // User to provide this file
+  const RICK_FACE_URL = "/image_songs/rick.jpeg"; // Provided by user
 
   // Media Refs and Paths
   const bgMusicRef = useRef(null);
@@ -27,6 +29,13 @@ function App() {
     destination: "A Romantic Trip to the Mountains! 🏔️",
     dateTime: "February 14, 2026 • 09:00 AM"
   };
+
+  const CENA_GIFS = [
+    "https://media.giphy.com/media/l0HU20BZ6LbSEITza/giphy.gif",
+    "https://media.giphy.com/media/13MNYz2xb7f34A/giphy.gif",
+    "https://media.giphy.com/media/3o7TKWhfEUp617m5H6/giphy.gif",
+    "https://media.giphy.com/media/26vUxO377227G5Lsk/giphy.gif"
+  ];
   // ----------------------------------------------
 
   const playSFX = (path) => {
@@ -35,6 +44,36 @@ function App() {
       console.warn(`SFX play failed for ${path}:`, e.message);
     });
   };
+
+  // Jumpscare Logic - ONLY during name entry (auth screen)
+  useEffect(() => {
+    let timeoutId;
+
+    if (!isAuthenticated) {
+      const triggerRandomJumpscare = () => {
+        const randomDelay = Math.random() * 1000 + 1000; // 1-2 seconds
+        timeoutId = setTimeout(() => {
+          setShowJumpscare(true);
+          playSFX(RICK_SFX_URL);
+
+          setTimeout(() => {
+            setShowJumpscare(false);
+          }, 400); // Fast: 400ms
+
+          // Prepare next random trigger
+          timeoutId = triggerRandomJumpscare();
+        }, randomDelay);
+        return timeoutId;
+      };
+
+      // Initialize first jumpscare
+      timeoutId = triggerRandomJumpscare();
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isAuthenticated, RICK_SFX_URL]);
 
   const handleAuth = (e) => {
     e.preventDefault();
@@ -104,6 +143,22 @@ function App() {
     <div className="app">
       {/* Background Audio Slot */}
       <audio ref={bgMusicRef} src={AUDIO_PATH} loop />
+
+      {/* Jumpscare Overlay */}
+      {showJumpscare && (
+        <div className="jumpscare-overlay">
+          <img src={RICK_FACE_URL} alt="RICK GRIMES" />
+        </div>
+      )}
+
+      {/* Global Cena Background */}
+      {showInvitation && !response && (
+        <div className="cena-surprises">
+          {CENA_GIFS.map((url, index) => (
+            <img key={index} src={url} alt="John Cena" className={`cena-gif cena-gif-${index}`} />
+          ))}
+        </div>
+      )}
 
       {!isAuthenticated ? (
         <div className="auth-container glass">
